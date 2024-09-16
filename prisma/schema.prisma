@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(auto()) @map("_id")
+  email     String   @db.VarChar(255) @unique
+  password  String   @db.VarChar(255)
+  name      String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+  goals     Goal[]
+  activities Activity[]
+}
+
+model Goal {
+  id        Int      @id @default(auto()) @map("_id")
+  userId    Int
+  type      String   @db.VarChar(255)
+  targetValue Int
+  startDate Date
+  endDate   Date
+  progress  Int      @default(0)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Activity {
+  id        Int      @id @default(auto()) @map("_id")
+  userId    Int
+  type      String   @db.VarChar(255)
+  duration  Int
+  caloriesBurned Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
